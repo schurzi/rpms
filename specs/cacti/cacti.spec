@@ -13,7 +13,6 @@ Group: Applications/System
 URL: http://www.cacti.net/
 
 Source: http://www.cacti.net/downloads/cacti-%{version}.tar.gz
-#Patch0: settings_checkbox.patch 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildArch: noarch
 
@@ -55,7 +54,6 @@ This package includes the documentation for %{name}.
 
 %prep
 %setup
-#%patch0 -p1
 
 echo -e "*/5 * * * *\tcacti\tphp %{_localstatedir}/www/cacti/poller.php &>/dev/null" >cacti.crontab
 
