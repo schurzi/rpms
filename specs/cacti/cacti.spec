@@ -132,6 +132,7 @@ fi
 
 %defattr(-, cacti, cacti, 0755 )
 %{_localstatedir}/www/cacti/log/
+%config(noreplace) %{_localstatedir}/www/cacti/log/cacti.log
 %{_localstatedir}/www/cacti/rra/
 
 %files docs
