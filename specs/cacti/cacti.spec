@@ -88,6 +88,7 @@ EOF
 %install
 %{__rm} -rf %{buildroot}
 %{__install} -d -m0755 %{buildroot}%{_localstatedir}/www/%{name}/
+%{__install} -d -m0755 %{buildroot}%{_localstatedir}/log/
 %{__install} -p -m0644 *.php cacti.sql %{buildroot}%{_localstatedir}/www/%{name}/
 %{__cp} -av cli/ docs/ images/ include/ install/ lib/ log/ plugins/ resource/ rra/ scripts/ %{buildroot}%{_localstatedir}/www/%{name}/
 
@@ -95,6 +96,7 @@ EOF
 %{__install} -Dp -m0644 cacti.httpd %{buildroot}%{_sysconfdir}/httpd/conf.d/%{name}.conf
 %{__install} -Dp -m0644 cacti.logrotate %{buildroot}/%{_sysconfdir}/logrotate.d/%{name}
 
+ln -s %{_localstatedir}/www/%{name}/log %{buildroot}%{_localstatedir}/log/%{name}
 
 %pre
 if ! /usr/bin/id %{name} &>/dev/null; then
@@ -134,6 +136,7 @@ fi
 %{_localstatedir}/www/%{name}/log/
 %config(noreplace) %{_localstatedir}/www/%{name}/log/cacti.log
 %{_localstatedir}/www/%{name}/rra/
+%{_localstatedir}/log/%{name}/
 
 %files docs
 %defattr(-, root, root, 0755)
