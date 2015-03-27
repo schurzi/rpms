@@ -73,6 +73,16 @@ Alias /cacti/ %{_localstatedir}/www/cacti/
 </Directory>
 EOF
 
+%{__cat} <<EOF >cacti.logrotate
+%{_localstatedir}/www/cacti/log/cacti.log {
+    missingok
+    monthly
+    notifempty
+    compress
+    create 0664 cacti cacti
+}
+EOF
+
 %build
 
 %install
@@ -83,6 +93,8 @@ EOF
 
 %{__install} -Dp -m0644 cacti.crontab %{buildroot}%{_sysconfdir}/cron.d/cacti
 %{__install} -Dp -m0644 cacti.httpd %{buildroot}%{_sysconfdir}/httpd/conf.d/cacti.conf
+%{__install} -Dp -m0644 cacti.logrotate %{buildroot}/%{_sysconfdir}/logrotate.d/cacti
+
 
 %pre
 if ! /usr/bin/id cacti &>/dev/null; then
@@ -103,6 +115,7 @@ fi
 %doc LICENSE README
 %config(noreplace) %{_localstatedir}/www/cacti/include/config.php
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/cacti.conf
+%config(noreplace) %{_sysconfdir}/logrotate.d/cacti
 %config %{_sysconfdir}/cron.d/cacti
 %dir %{_localstatedir}/www/cacti/
 %{_localstatedir}/www/cacti/*.php
@@ -128,6 +141,7 @@ fi
 %changelog
 * Fri Mar 27 2015 Martin Schurz <schurzi@drachen-server.de> - 0.8.8c-1
 - Updated to release 0.8.8c.
+- added logrotate
 
 * Tue Aug 27 2013 David Hrbáč <david@hrbac.cz> - 0.8.8b-1
 - new upstream release
