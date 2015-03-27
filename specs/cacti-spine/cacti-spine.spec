@@ -17,7 +17,7 @@ URL: http://www.cacti.net/
 Source: http://www.cacti.net/downloads/spine/cacti-spine-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
-BuildRequires: mysql-devel, openssl-devel
+BuildRequires: mysql-devel, openssl-devel, autoconf, automake, libtool
 
 %{!?_without_net_snmp:BuildRequires: net-snmp-devel, net-snmp-utils}
 %{?_without_net_snmp:BuildRequires: ucd-snmp-devel, ucd-snmp-utils}
