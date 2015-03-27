@@ -55,12 +55,12 @@ This package includes the documentation for %{name}.
 %prep
 %setup
 
-echo -e "*/5 * * * *\tcacti\tphp %{_localstatedir}/www/cacti/poller.php &>/dev/null" >cacti.crontab
+echo -e "*/5 * * * *\t%{name}\tphp %{_localstatedir}/www/%{name}/poller.php &>/dev/null" >cacti.crontab
 
 ### Add a default cacti.conf for Apache.
 %{__cat} <<EOF >cacti.httpd
-Alias /cacti/ %{_localstatedir}/www/cacti/
-<Directory %{_localstatedir}/www/cacti/>
+Alias /%{name}/ %{_localstatedir}/www/%{name}/
+<Directory %{_localstatedir}/www/%{name}/>
     DirectoryIndex index.php
     Options -Indexes
     AllowOverride all
@@ -74,12 +74,12 @@ Alias /cacti/ %{_localstatedir}/www/cacti/
 EOF
 
 %{__cat} <<EOF >cacti.logrotate
-%{_localstatedir}/www/cacti/log/cacti.log {
+%{_localstatedir}/www/%{name}/log/cacti.log {
     missingok
     monthly
     notifempty
     compress
-    create 0664 cacti cacti
+    create 0664 %{name} %{name}
 }
 EOF
 
@@ -87,24 +87,24 @@ EOF
 
 %install
 %{__rm} -rf %{buildroot}
-%{__install} -d -m0755 %{buildroot}%{_localstatedir}/www/cacti/
-%{__install} -p -m0644 *.php cacti.sql %{buildroot}%{_localstatedir}/www/cacti/
-%{__cp} -av cli/ docs/ images/ include/ install/ lib/ log/ plugins/ resource/ rra/ scripts/ %{buildroot}%{_localstatedir}/www/cacti/
+%{__install} -d -m0755 %{buildroot}%{_localstatedir}/www/%{name}/
+%{__install} -p -m0644 *.php cacti.sql %{buildroot}%{_localstatedir}/www/%{name}/
+%{__cp} -av cli/ docs/ images/ include/ install/ lib/ log/ plugins/ resource/ rra/ scripts/ %{buildroot}%{_localstatedir}/www/%{name}/
 
-%{__install} -Dp -m0644 cacti.crontab %{buildroot}%{_sysconfdir}/cron.d/cacti
-%{__install} -Dp -m0644 cacti.httpd %{buildroot}%{_sysconfdir}/httpd/conf.d/cacti.conf
-%{__install} -Dp -m0644 cacti.logrotate %{buildroot}/%{_sysconfdir}/logrotate.d/cacti
+%{__install} -Dp -m0644 cacti.crontab %{buildroot}%{_sysconfdir}/cron.d/%{name}
+%{__install} -Dp -m0644 cacti.httpd %{buildroot}%{_sysconfdir}/httpd/conf.d/%{name}.conf
+%{__install} -Dp -m0644 cacti.logrotate %{buildroot}/%{_sysconfdir}/logrotate.d/%{name}
 
 
 %pre
-if ! /usr/bin/id cacti &>/dev/null; then
-    /usr/sbin/useradd -r -d %{_localstatedir}/www/cacti -s /bin/sh -c "cacti" cacti || \
-        %logmsg "Unexpected error adding user \"cacti\". Aborting installation."
+if ! /usr/bin/id %{name} &>/dev/null; then
+    /usr/sbin/useradd -r -d %{_localstatedir}/www/%{name} -s /bin/sh -c "%{name}" %{name} || \
+        %logmsg "Unexpected error adding user \"%{name}\". Aborting installation."
 fi
 
 %postun
 if [ $1 -eq 0 ]; then
-    /usr/sbin/userdel cacti || %logmsg "User \"cacti\" could not be deleted."
+    /usr/sbin/userdel %{name} || %logmsg "User \"%{name}\" could not be deleted."
 fi
 
 %clean
@@ -113,27 +113,27 @@ fi
 %files
 %defattr(-, root, root, 0755)
 %doc LICENSE README
-%config(noreplace) %{_localstatedir}/www/cacti/include/config.php
-%config(noreplace) %{_sysconfdir}/httpd/conf.d/cacti.conf
-%config(noreplace) %{_sysconfdir}/logrotate.d/cacti
-%config %{_sysconfdir}/cron.d/cacti
-%dir %{_localstatedir}/www/cacti/
-%{_localstatedir}/www/cacti/*.php
-%{_localstatedir}/www/cacti/cacti.sql
-%{_localstatedir}/www/cacti/cli/
-%{_localstatedir}/www/cacti/docs/
-%{_localstatedir}/www/cacti/images/
-%{_localstatedir}/www/cacti/include/
-%{_localstatedir}/www/cacti/install/
-%{_localstatedir}/www/cacti/lib/
-%{_localstatedir}/www/cacti/plugins/
-%{_localstatedir}/www/cacti/resource/
-%{_localstatedir}/www/cacti/scripts/
+%config(noreplace) %{_localstatedir}/www/%{name}/include/config.php
+%config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
+%config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
+%config %{_sysconfdir}/cron.d/%{name}
+%dir %{_localstatedir}/www/%{name}/
+%{_localstatedir}/www/%{name}/*.php
+%{_localstatedir}/www/%{name}/cacti.sql
+%{_localstatedir}/www/%{name}/cli/
+%{_localstatedir}/www/%{name}/docs/
+%{_localstatedir}/www/%{name}/images/
+%{_localstatedir}/www/%{name}/include/
+%{_localstatedir}/www/%{name}/install/
+%{_localstatedir}/www/%{name}/lib/
+%{_localstatedir}/www/%{name}/plugins/
+%{_localstatedir}/www/%{name}/resource/
+%{_localstatedir}/www/%{name}/scripts/
 
-%defattr(-, cacti, cacti, 0755 )
-%{_localstatedir}/www/cacti/log/
-%config(noreplace) %{_localstatedir}/www/cacti/log/cacti.log
-%{_localstatedir}/www/cacti/rra/
+%defattr(-, %{name}, %{name}, 0755 )
+%{_localstatedir}/www/%{name}/log/
+%config(noreplace) %{_localstatedir}/www/%{name}/log/cacti.log
+%{_localstatedir}/www/%{name}/rra/
 
 %files docs
 %defattr(-, root, root, 0755)
